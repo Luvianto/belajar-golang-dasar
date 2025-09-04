@@ -2,12 +2,12 @@ package main
 
 import (
 	"belajar-golang-dasar/cmd"
-	commonutils "belajar-golang-dasar/common/utils"
+	"belajar-golang-dasar/pkg/env"
 	"flag"
 )
 
 func main() {
-	commonutils.LoadEnv()
+	env.LoadEnv()
 
 	runSeeder := flag.Bool("seed", false, "Menjalanakan seeder")
 	runMigration := flag.Bool("migrate", false, "Menjalankan migration")

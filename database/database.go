@@ -1,7 +1,7 @@
 package database
 
 import (
-	commonutils "belajar-golang-dasar/common/utils"
+	"belajar-golang-dasar/pkg/env"
 	"fmt"
 
 	"gorm.io/driver/mysql"
@@ -29,11 +29,11 @@ func connectDB() (*gorm.DB, error) {
 	// without parseTime=true, MySQL sends DATETIME values as raw []uint8 instead of converting them to time.Time
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?parseTime=true",
-		commonutils.GetEnv("DB_USER"),
-		commonutils.GetEnv("DB_PASS"),
-		commonutils.GetEnv("DB_HOST"),
-		commonutils.GetEnv("DB_PORT"),
-		commonutils.GetEnv("DB_NAME"),
+		env.GetEnv("DB_USER"),
+		env.GetEnv("DB_PASS"),
+		env.GetEnv("DB_HOST"),
+		env.GetEnv("DB_PORT"),
+		env.GetEnv("DB_NAME"),
 	)
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})

@@ -2,7 +2,8 @@ package database
 
 import (
 	"belajar-golang-dasar/app/api/models"
-	commonutils "belajar-golang-dasar/common/utils"
+	commonUtils "belajar-golang-dasar/common/utils"
+	"belajar-golang-dasar/pkg/env"
 	"fmt"
 
 	"gorm.io/gorm"
@@ -14,7 +15,7 @@ func Seeder(db *gorm.DB) {
 }
 
 func InitAdmin(db *gorm.DB) {
-	email := commonutils.GetEnv("USER_ADMIN_EMAIL")
+	email := env.GetEnv("USER_ADMIN_EMAIL")
 
 	var isExists bool
 	query := db.Table("users").Select("count(*) > 0").Where("email = ?", email).Find(&isExists)
@@ -26,11 +27,11 @@ func InitAdmin(db *gorm.DB) {
 	if !isExists {
 		fmt.Println("Loading seeder admin...")
 		isAdmin := true
-		uuid := commonutils.GenerateUUID()
-		email := commonutils.GetEnv("USER_ADMIN_EMAIL")
-		password := commonutils.GetEnv("USER_ADMIN_PASSWORD")
-		phone := commonutils.GetEnv("USER_ADMIN_PHONE")
-		encryptedPassword, err := commonutils.Encrypt(&password)
+		uuid := commonUtils.GenerateUUID()
+		email := env.GetEnv("USER_ADMIN_EMAIL")
+		password := env.GetEnv("USER_ADMIN_PASSWORD")
+		phone := env.GetEnv("USER_ADMIN_PHONE")
+		encryptedPassword, err := commonUtils.Encrypt(&password)
 		if err != nil {
 			fmt.Println("Error:", err)
 			return
@@ -63,7 +64,7 @@ func InitMember(db *gorm.DB) {
 		var user models.User
 		selectResult := db.Table("users").
 			Select("UUID").
-			Where("email = ?", commonutils.GetEnv("USER_ADMIN_EMAIL")).
+			Where("email = ?", env.GetEnv("USER_ADMIN_EMAIL")).
 			First(&user)
 		if selectResult.Error != nil {
 			fmt.Println("Error:", selectResult.Error)
