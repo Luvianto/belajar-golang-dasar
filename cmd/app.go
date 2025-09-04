@@ -1,36 +1,14 @@
-package main
+package cmd
 
 import (
 	"belajar-golang-dasar/app/api/models"
 	"belajar-golang-dasar/app/api/services"
-	commonutils "belajar-golang-dasar/app/common/utils"
 	"belajar-golang-dasar/app/config/database"
 	"belajar-golang-dasar/app/config/repository/mysql"
-	"flag"
 	"fmt"
 )
 
-func main() {
-	commonutils.LoadEnv()
-
-	runSeeder := flag.Bool("seed", false, "Menjalanakan seeder")
-	runMigration := flag.Bool("migrate", false, "Menjalankan migration")
-	flag.Parse()
-
-	if *runMigration {
-		migration()
-	}
-
-	if *runSeeder {
-		seeder()
-	}
-
-	if !*runMigration && !*runSeeder {
-		app()
-	}
-}
-
-func app() {
+func App() {
 	database.InitializeDB()
 	db := database.GetDBInstance()
 
@@ -58,23 +36,4 @@ func app() {
 
 	fmt.Println(member)
 	fmt.Println(err)
-}
-
-func migration() {
-	database.InitializeDB()
-	db := database.GetDBInstance()
-
-	fmt.Println("Loading migrating database...")
-	err := database.Migrate(db)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Success migrating database")
-}
-
-func seeder() {
-	database.InitializeDB()
-	db := database.GetDBInstance()
-	fmt.Println("Seeding database...")
-	database.Seeder(db)
 }
