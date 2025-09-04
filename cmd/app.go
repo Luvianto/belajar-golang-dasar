@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"belajar-golang-dasar/app/api/models"
-	"belajar-golang-dasar/app/api/services"
-	"belajar-golang-dasar/app/config/repository/mysql"
 	"belajar-golang-dasar/database"
+	memberEntity "belajar-golang-dasar/internal/module/member/entity"
+	memberRepo "belajar-golang-dasar/internal/module/member/repository"
+	memberService "belajar-golang-dasar/internal/module/member/service"
 	"fmt"
 )
 
@@ -15,24 +15,12 @@ func App() {
 	// userRepo := mysql.NewUserRepository(db)
 	// userService := services.NewUserService(userRepo)
 
-	memberRep := mysql.NewMemberRepository(db)
-	memberService := services.NewMemberService(memberRep)
+	memberRepo := memberRepo.NewMemberRepository(db)
+	memberService := memberService.NewMemberService(memberRepo)
 
-	userCreate := &models.UserCreate{
-		IsAdmin:  false,
-		Email:    "John@gmail.com",
-		Password: "password123",
-		Phone:    "08123456789",
-	}
+	req := &memberEntity.MemberReqByID{ID: 1}
 
-	memberCreate := &models.MemberCreate{
-		User:              *userCreate,
-		Name:              "John Doe",
-		Major:             "Computer Science",
-		ProfilePictureUrl: "",
-	}
-
-	member, err := memberService.CreateMember(memberCreate)
+	member, err := memberService.GetMember(req)
 
 	fmt.Println(member)
 	fmt.Println(err)

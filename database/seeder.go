@@ -1,8 +1,8 @@
 package database
 
 import (
-	"belajar-golang-dasar/app/api/models"
 	commonUtils "belajar-golang-dasar/common/utils"
+	"belajar-golang-dasar/internal/module/user/entity"
 	"belajar-golang-dasar/pkg/env"
 	"fmt"
 
@@ -61,7 +61,7 @@ func InitMember(db *gorm.DB) {
 	}
 
 	if !isExists {
-		var user models.User
+		var user entity.User
 		selectResult := db.Table("users").
 			Select("UUID").
 			Where("email = ?", env.GetEnv("USER_ADMIN_EMAIL")).

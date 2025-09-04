@@ -1,7 +1,8 @@
 package database
 
 import (
-	"belajar-golang-dasar/app/api/models"
+	memberEntity "belajar-golang-dasar/internal/module/member/entity"
+	userEntity "belajar-golang-dasar/internal/module/user/entity"
 
 	"gorm.io/gorm"
 )
@@ -18,6 +19,6 @@ func Migrate(db *gorm.DB) error {
 }
 
 var modelList = []any{
-	&models.User{},
-	&models.Member{},
+	&userEntity.User{},
+	&memberEntity.Member{},
 }

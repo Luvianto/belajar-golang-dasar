@@ -1,4 +1,4 @@
-package models
+package entity
 
 import (
 	commonModels "belajar-golang-dasar/common/models"
@@ -23,8 +23,13 @@ type UserCreate struct {
 	Phone    string `json:"phone" validate:"required,min=11,max=15"`
 }
 
-type UserResponse struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Phone    string `json:"phone"`
+type UserReqByUUID struct {
+	UUID string `uri:"uuid" binding:"required"`
+}
+
+type UserGet struct {
+	UUID    uuid.UUID `json:"uuid"`
+	IsAdmin bool      `json:"is_admin"`
+	Email   string    `json:"email"`
+	Phone   string    `json:"phone" `
 }
