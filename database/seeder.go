@@ -2,7 +2,7 @@ package database
 
 import (
 	"belajar-golang-dasar/app/api/models"
-	commonutils "belajar-golang-dasar/app/common/utils"
+	commonutils "belajar-golang-dasar/common/utils"
 	"fmt"
 
 	"gorm.io/gorm"

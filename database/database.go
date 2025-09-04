@@ -1,7 +1,7 @@
 package database
 
 import (
-	commonutils "belajar-golang-dasar/app/common/utils"
+	commonutils "belajar-golang-dasar/common/utils"
 	"fmt"
 
 	"gorm.io/driver/mysql"
