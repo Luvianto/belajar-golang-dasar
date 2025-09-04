@@ -2,8 +2,8 @@ package services
 
 import (
 	"belajar-golang-dasar/app/api/models"
-	commonutils "belajar-golang-dasar/app/common/utils"
 	"belajar-golang-dasar/app/config/repository"
+	commonutils "belajar-golang-dasar/common/utils"
 )
 
 type MemberService struct {

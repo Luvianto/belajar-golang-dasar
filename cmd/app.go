@@ -3,8 +3,8 @@ package cmd
 import (
 	"belajar-golang-dasar/app/api/models"
 	"belajar-golang-dasar/app/api/services"
-	"belajar-golang-dasar/app/config/database"
 	"belajar-golang-dasar/app/config/repository/mysql"
+	"belajar-golang-dasar/database"
 	"fmt"
 )
 

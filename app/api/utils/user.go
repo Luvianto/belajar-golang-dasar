@@ -2,7 +2,7 @@ package utils
 
 import (
 	"belajar-golang-dasar/app/api/models"
-	commonutils "belajar-golang-dasar/app/common/utils"
+	commonutils "belajar-golang-dasar/common/utils"
 
 	"github.com/google/uuid"
 )

@@ -1,7 +1,7 @@
 package models
 
 import (
-	commonModels "belajar-golang-dasar/app/common/models"
+	commonModels "belajar-golang-dasar/common/models"
 
 	"github.com/google/uuid"
 )

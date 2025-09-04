@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"belajar-golang-dasar/app/config/database"
+	"belajar-golang-dasar/database"
 	"fmt"
 )
 

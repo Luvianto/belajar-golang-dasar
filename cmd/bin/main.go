@@ -1,8 +1,8 @@
 package main
 
 import (
-	commonutils "belajar-golang-dasar/app/common/utils"
 	"belajar-golang-dasar/cmd"
+	commonutils "belajar-golang-dasar/common/utils"
 	"flag"
 )
 
