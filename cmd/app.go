@@ -12,9 +12,6 @@ func App() {
 	database.InitializeDB()
 	db := database.GetDBInstance()
 
-	// userRepo := mysql.NewUserRepository(db)
-	// userService := services.NewUserService(userRepo)
-
 	memberRepo := memberRepo.NewMemberRepository(db)
 	memberService := memberService.NewMemberService(memberRepo)
 

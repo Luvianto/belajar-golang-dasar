@@ -60,7 +60,7 @@ func (s *memberService) GetMember(req *memberEntity.MemberReqByID) (*memberEntit
 func (s *memberService) CreateMember(req *memberEntity.MemberCreate) (*memberEntity.MemberGet, error) {
 	if req == nil {
 		log.Error().Msg("Member tidak boleh kosong")
-		return nil, fmt.Errorf("Member tidak boleh kosong")
+		return nil, fmt.Errorf("member tidak boleh kosong")
 	}
 
 	userUUID := commonutils.GenerateUUID()
@@ -85,7 +85,7 @@ func (s *memberService) CreateMember(req *memberEntity.MemberCreate) (*memberEnt
 
 	if !status {
 		log.Error().Msg("Pengguna gagal dibuat")
-		return nil, fmt.Errorf("Pengguna gagal dibuat")
+		return nil, fmt.Errorf("pengguna gagal dibuat")
 	}
 
 	return &memberEntity.MemberGet{

@@ -2,9 +2,11 @@ package database
 
 import (
 	commonUtils "belajar-golang-dasar/common/utils"
-	"belajar-golang-dasar/internal/module/user/entity"
+	memberEntity "belajar-golang-dasar/internal/module/member/entity"
+	userEntity "belajar-golang-dasar/internal/module/user/entity"
 	"belajar-golang-dasar/pkg/env"
 	"fmt"
+	"log"
 
 	"gorm.io/gorm"
 )
@@ -28,7 +30,6 @@ func InitAdmin(db *gorm.DB) {
 		fmt.Println("Loading seeder admin...")
 		isAdmin := true
 		uuid := commonUtils.GenerateUUID()
-		email := env.GetEnv("USER_ADMIN_EMAIL")
 		password := env.GetEnv("USER_ADMIN_PASSWORD")
 		phone := env.GetEnv("USER_ADMIN_PHONE")
 		encryptedPassword, err := commonUtils.Encrypt(&password)
@@ -37,11 +38,17 @@ func InitAdmin(db *gorm.DB) {
 			return
 		}
 
-		db.Exec(`
-		INSERT INTO users
-			(uuid, is_admin, email, password, phone, created_at, updated_at)
-		VALUES
-			(?, ?, ?, ?, ?, now(), now())`, uuid, isAdmin, email, encryptedPassword, phone)
+		user := userEntity.User{
+			UUID:     uuid,
+			IsAdmin:  isAdmin,
+			Email:    email,
+			Password: encryptedPassword,
+			Phone:    phone,
+		}
+
+		if err := db.Create(&user).Error; err != nil {
+			log.Fatalf("Failed to seed user: %v", err)
+		}
 		fmt.Println("Success seeding user admin")
 	}
 }
@@ -61,7 +68,7 @@ func InitMember(db *gorm.DB) {
 	}
 
 	if !isExists {
-		var user entity.User
+		var user userEntity.User
 		selectResult := db.Table("users").
 			Select("UUID").
 			Where("email = ?", env.GetEnv("USER_ADMIN_EMAIL")).
@@ -71,16 +78,16 @@ func InitMember(db *gorm.DB) {
 			return
 		}
 
-		name := "Luvianto"
-		major := "Computer Science"
-		profilePictureUrl := ""
+		member := memberEntity.Member{
+			UserID:            user.UUID,
+			Name:              "Luvianto",
+			Major:             "Computer Science",
+			ProfilePictureUrl: "",
+		}
 
-		db.Exec(`
-		INSERT INTO members
-			(user_id, name, major, profile_picture_url, created_at, updated_at)
-		VALUES
-			(?, ?, ?, ?, now(), now())`,
-			user.UUID, name, major, profilePictureUrl)
+		if err := db.Create(&member).Error; err != nil {
+			log.Fatalf("Failed to seed member: %v", err)
+		}
 
 		fmt.Println("Success seeding member Luvianto")
 	}
