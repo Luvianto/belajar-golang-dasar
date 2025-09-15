@@ -1,9 +1,12 @@
 package service
 
 import (
+	commonutils "belajar-golang-dasar/common/utils"
 	memberEntity "belajar-golang-dasar/internal/module/member/entity"
 	"belajar-golang-dasar/internal/module/member/interfaces"
+	memberUtils "belajar-golang-dasar/internal/module/member/utils"
 	userEntity "belajar-golang-dasar/internal/module/user/entity"
+	userUtils "belajar-golang-dasar/internal/module/user/utils"
 	"fmt"
 
 	"github.com/rs/zerolog/log"
@@ -23,21 +26,68 @@ func NewMemberService(repo interfaces.MemberRepository) *memberService {
 
 func (s *memberService) GetMember(req *memberEntity.MemberReqByID) (*memberEntity.MemberGet, error) {
 	if req.ID == 0 {
-		log.Error().Msg("id tidak boleh kosong")
-		return nil, fmt.Errorf("id tidak boleh kosong")
+		log.Error().Msg("ID tidak boleh kosong")
+		return nil, fmt.Errorf("ID tidak boleh kosong")
 	}
 
 	member, found, err := s.repo.GetMember(req.ID)
 	if err != nil {
-		log.Error().Err(err).Msg("gagal mendapatkan pengguna")
+		log.Error().Err(err).Msg("Gagal mendapatkan pengguna")
 		return nil, err
 	}
+
 	if !found {
-		log.Error().Msg("pengguna tidak ditemukan")
+		log.Error().Msg("Pengguna tidak ditemukan")
 		return nil, fmt.Errorf("pengguna tidak ditemukan")
 	}
 
-	log.Info().Msg("berhasil mendapatkan pengguna")
+	log.Info().Msg("Berhasil mendapatkan pengguna")
+
+	return &memberEntity.MemberGet{
+		ID: member.ID,
+		User: userEntity.UserGet{
+			UUID:    member.UserID,
+			IsAdmin: member.User.IsAdmin,
+			Email:   member.User.Email,
+			Phone:   member.User.Phone,
+		},
+		Name:              member.Name,
+		Major:             member.Major,
+		ProfilePictureUrl: member.ProfilePictureUrl,
+	}, nil
+}
+
+func (s *memberService) CreateMember(req *memberEntity.MemberCreate) (*memberEntity.MemberGet, error) {
+	if req == nil {
+		log.Error().Msg("Member tidak boleh kosong")
+		return nil, fmt.Errorf("Member tidak boleh kosong")
+	}
+
+	userUUID := commonutils.GenerateUUID()
+
+	createUser, err := userUtils.UserCreateParser(&req.User, userUUID)
+	if err != nil {
+		log.Error().Err(err).Msg("Gagal memproses data pengguna")
+		return nil, err
+	}
+
+	createMember, err := memberUtils.MemberCreateParser(req, userUUID)
+	if err != nil {
+		log.Error().Err(err).Msg("Gagal memproses data member")
+		return nil, err
+	}
+
+	member, status, err := s.repo.CreateMember(*createUser, *createMember)
+	if err != nil {
+		log.Error().Err(err).Msg("Gagal membuat pengguna")
+		return nil, err
+	}
+
+	if !status {
+		log.Error().Msg("Pengguna gagal dibuat")
+		return nil, fmt.Errorf("Pengguna gagal dibuat")
+	}
+
 	return &memberEntity.MemberGet{
 		ID: member.ID,
 		User: userEntity.UserGet{

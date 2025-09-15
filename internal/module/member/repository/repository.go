@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"belajar-golang-dasar/internal/module/member/entity"
+	memberEntity "belajar-golang-dasar/internal/module/member/entity"
 	"belajar-golang-dasar/internal/module/member/interfaces"
+	userEntity "belajar-golang-dasar/internal/module/user/entity"
 	"belajar-golang-dasar/pkg/validator"
 
 	"gorm.io/gorm"
@@ -20,8 +21,8 @@ func NewMemberRepository(db *gorm.DB) *memberRepository {
 	}
 }
 
-func (r *memberRepository) GetMember(id int) (*entity.Member, bool, error) {
-	var member entity.Member
+func (r *memberRepository) GetMember(id int) (*memberEntity.Member, bool, error) {
+	var member memberEntity.Member
 	query := r.db.Model(&member).Where("id = ?", id)
 	exists, err := validator.Query(query)
 	if err != nil {
@@ -33,5 +34,29 @@ func (r *memberRepository) GetMember(id int) (*entity.Member, bool, error) {
 	}
 
 	query.First(&member)
+	return &member, true, nil
+}
+
+func (r *memberRepository) CreateMember(user userEntity.User, member memberEntity.Member) (*memberEntity.Member, bool, error) {
+	userQuery := r.db.Model(&member).Create(member)
+	userExists, err := validator.Query(userQuery)
+	if err != nil {
+		return nil, false, err
+	}
+
+	if !userExists {
+		return nil, false, nil
+	}
+
+	memberQuery := r.db.Model(&member).Create(member)
+	memberExists, err := validator.Query(memberQuery)
+	if err != nil {
+		return nil, false, err
+	}
+
+	if !memberExists {
+		return nil, false, nil
+	}
+
 	return &member, true, nil
 }
