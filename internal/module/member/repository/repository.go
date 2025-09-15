@@ -38,7 +38,7 @@ func (r *memberRepository) GetMember(id int) (*memberEntity.Member, bool, error)
 }
 
 func (r *memberRepository) CreateMember(user userEntity.User, member memberEntity.Member) (*memberEntity.Member, bool, error) {
-	userQuery := r.db.Model(&user).Create(user)
+	userQuery := r.db.Model(&user).Create(&user)
 	userExists, err := validator.Query(userQuery)
 	if err != nil {
 		return nil, false, err
@@ -48,7 +48,7 @@ func (r *memberRepository) CreateMember(user userEntity.User, member memberEntit
 		return nil, false, nil
 	}
 
-	memberQuery := r.db.Model(&member).Create(member)
+	memberQuery := r.db.Model(&member).Create(&member)
 	memberExists, err := validator.Query(memberQuery)
 	if err != nil {
 		return nil, false, err
