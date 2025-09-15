@@ -40,7 +40,7 @@ func InitializeDB() {
 }
 
 func connectSQLite() (*gorm.DB, error) {
-	dsn := "file::memory:?cache=shared"
+	dsn := "debug.db"
 	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
