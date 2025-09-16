@@ -14,6 +14,12 @@ type userService struct {
 	repo interfaces.UserRepository
 }
 
+func NewUserService(repo interfaces.UserRepository) *userService {
+	return &userService{
+		repo: repo,
+	}
+}
+
 func (s *userService) GetUser(req *entity.UserReqByUUID) (*entity.UserGet, error) {
 	if req.UUID == "" {
 		log.Error().Msg("UUID tidak boleh kosong")
