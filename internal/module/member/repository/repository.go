@@ -23,7 +23,7 @@ func NewMemberRepository(db *gorm.DB) *memberRepository {
 
 func (r *memberRepository) GetMember(id int) (*memberEntity.Member, bool, error) {
 	var member memberEntity.Member
-	query := r.db.Model(&member).Where("id = ?", id)
+	query := r.db.Preload("User").Model(&member).Where("id = ?", id)
 	exists, err := validator.Query(query)
 	if err != nil {
 		return nil, false, err
