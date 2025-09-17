@@ -101,3 +101,40 @@ func (s *memberService) CreateMember(req *memberEntity.MemberCreate) (*memberEnt
 		ProfilePictureUrl: member.ProfilePictureUrl,
 	}, nil
 }
+
+func (s *memberService) UpdateMember(req *memberEntity.MemberUpdate) (*memberEntity.MemberGet, error) {
+	if req == nil {
+		log.Error().Msg("Member tidak boleh kosong")
+		return nil, fmt.Errorf("member tidak boleh kosong")
+	}
+
+	updateMember, err := memberUtils.MemberUpdateParser(req)
+	if err != nil {
+		log.Error().Err(err).Msg("Gagal memproses data member")
+		return nil, err
+	}
+
+	member, status, err := s.repo.UpdateMember(*updateMember)
+	if err != nil {
+		log.Error().Err(err).Msg("Gagal mengubah pengguna")
+		return nil, err
+	}
+
+	if !status {
+		log.Error().Msg("Pengguna gagal diubah")
+		return nil, fmt.Errorf("pengguna gagal diubah")
+	}
+
+	return &memberEntity.MemberGet{
+		ID: member.ID,
+		User: userEntity.UserGet{
+			UUID:    member.UserID,
+			IsAdmin: member.User.IsAdmin,
+			Email:   member.User.Email,
+			Phone:   member.User.Phone,
+		},
+		Name:              member.Name,
+		Major:             member.Major,
+		ProfilePictureUrl: member.ProfilePictureUrl,
+	}, nil
+}

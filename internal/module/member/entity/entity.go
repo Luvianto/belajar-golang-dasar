@@ -25,6 +25,14 @@ type MemberCreate struct {
 	ProfilePictureUrl string            `json:"profile_picture_url"`
 }
 
+type MemberUpdate struct {
+	ID                int       `json:"id"`
+	UserID            uuid.UUID `json:"user_id"`
+	Name              string    `json:"name"`
+	Major             string    `json:"major"`
+	ProfilePictureUrl string    `json:"profile_picture_url"`
+}
+
 type MemberReqByID struct {
 	ID int `binding:"required"`
 }

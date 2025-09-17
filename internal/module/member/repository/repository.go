@@ -60,3 +60,17 @@ func (r *memberRepository) CreateMember(user userEntity.User, member memberEntit
 
 	return &member, true, nil
 }
+
+func (r *memberRepository) UpdateMember(member memberEntity.Member) (*memberEntity.Member, bool, error) {
+	query := r.db.Model(&member).Where("id = ?", member.ID).Updates(&member)
+	memberExists, err := validator.Query(query)
+	if err != nil {
+		return nil, false, err
+	}
+
+	if !memberExists {
+		return nil, false, nil
+	}
+
+	return &member, true, nil
+}
