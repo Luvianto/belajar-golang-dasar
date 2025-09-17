@@ -24,6 +24,38 @@ func NewMemberService(repo interfaces.MemberRepository) *memberService {
 	}
 }
 
+func (s *memberService) GetAllMember() ([]*memberEntity.MemberGet, error) {
+	members, status, err := s.repo.GetAllMember()
+	if err != nil {
+		log.Error().Err(err).Msg("Gagal mendapatkan pengguna")
+		return nil, err
+	}
+
+	if !status {
+		log.Error().Msg("Gagal mendapatkan pengguna")
+		return nil, fmt.Errorf("gagal mendapatkan pengguna")
+	}
+
+	if len(members) == 0 {
+		log.Error().Msg("Pengguna tidak ditemukan")
+		return nil, fmt.Errorf("pengguna tidak ditemukan")
+	}
+
+	log.Info().Msg("Berhasil mendapatkan pengguna")
+
+	var memberGets []*memberEntity.MemberGet
+	for _, member := range members {
+		memberGets = append(memberGets, &memberEntity.MemberGet{
+			ID:                member.ID,
+			Name:              member.Name,
+			Major:             member.Major,
+			ProfilePictureUrl: member.ProfilePictureUrl,
+		})
+	}
+
+	return memberGets, nil
+}
+
 func (s *memberService) GetMember(req *memberEntity.MemberReqByID) (*memberEntity.MemberGet, error) {
 	if req.ID == 0 {
 		log.Error().Msg("ID tidak boleh kosong")

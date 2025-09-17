@@ -6,6 +6,7 @@ import (
 )
 
 type MemberRepository interface {
+	GetAllMember() ([]*memberEntity.Member, bool, error)
 	GetMember(id int) (*memberEntity.Member, bool, error)
 	CreateMember(user userEntity.User, member memberEntity.Member) (*memberEntity.Member, bool, error)
 	UpdateMember(member memberEntity.Member) (*memberEntity.Member, bool, error)
@@ -13,6 +14,7 @@ type MemberRepository interface {
 }
 
 type MemberService interface {
+	GetAllMember() ([]*memberEntity.MemberGet, error)
 	GetMember(req *memberEntity.MemberReqByID) (*memberEntity.MemberGet, error)
 	CreateMember(req *memberEntity.MemberCreate) (*memberEntity.MemberGet, error)
 	UpdateMember(req *memberEntity.MemberUpdate) (*memberEntity.MemberGet, error)

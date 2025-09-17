@@ -21,6 +21,21 @@ func NewMemberRepository(db *gorm.DB) *memberRepository {
 	}
 }
 
+func (r *memberRepository) GetAllMember() ([]*memberEntity.Member, bool, error) {
+	var members []*memberEntity.Member
+	query := r.db.Preload("User").Find(&members)
+	exists, err := validator.Query(query)
+	if err != nil {
+		return nil, false, err
+	}
+
+	if !exists {
+		return nil, false, nil
+	}
+
+	return members, true, nil
+}
+
 func (r *memberRepository) GetMember(id int) (*memberEntity.Member, bool, error) {
 	var member memberEntity.Member
 	query := r.db.Preload("User").Model(&member).Where("id = ?", id)
@@ -87,15 +102,15 @@ func (r *memberRepository) DeleteMember(id int) (*memberEntity.Member, bool, err
 		return nil, false, nil
 	}
 
-	r.db.Model(&member).Where("id = ?", id).Delete(&member)
-	// memberExists, err = validator.Query(deleteQuery)
-	// if err != nil {
-	// 	return nil, false, err
-	// }
+	deleteQuery := r.db.Model(&member).Where("id = ?", id).Delete(&member)
+	memberExists, err = validator.Query(deleteQuery)
+	if err != nil {
+		return nil, false, err
+	}
 
-	// if !memberExists {
-	// 	return nil, false, nil
-	// }
+	if memberExists {
+		return nil, false, nil
+	}
 
 	return &member, true, nil
 }
