@@ -74,3 +74,28 @@ func (r *memberRepository) UpdateMember(member memberEntity.Member) (*memberEnti
 
 	return &member, true, nil
 }
+
+func (r *memberRepository) DeleteMember(id int) (*memberEntity.Member, bool, error) {
+	var member memberEntity.Member
+	getQuery := r.db.Model(&member).Where("id = ?", id).First(&member)
+	memberExists, err := validator.Query(getQuery)
+	if err != nil {
+		return nil, false, err
+	}
+
+	if !memberExists {
+		return nil, false, nil
+	}
+
+	r.db.Model(&member).Where("id = ?", id).Delete(&member)
+	// memberExists, err = validator.Query(deleteQuery)
+	// if err != nil {
+	// 	return nil, false, err
+	// }
+
+	// if !memberExists {
+	// 	return nil, false, nil
+	// }
+
+	return &member, true, nil
+}

@@ -138,3 +138,34 @@ func (s *memberService) UpdateMember(req *memberEntity.MemberUpdate) (*memberEnt
 		ProfilePictureUrl: member.ProfilePictureUrl,
 	}, nil
 }
+
+func (s *memberService) DeleteMember(req *memberEntity.MemberReqByID) (*memberEntity.MemberGet, error) {
+	if req == nil {
+		log.Error().Msg("Member tidak boleh kosong")
+		return nil, fmt.Errorf("member tidak boleh kosong")
+	}
+
+	member, status, err := s.repo.DeleteMember(req.ID)
+	if err != nil {
+		log.Error().Err(err).Msg("Gagal menghapus pengguna")
+		return nil, err
+	}
+
+	if !status {
+		log.Error().Msg("Pengguna gagal dihapus")
+		return nil, fmt.Errorf("pengguna gagal dihapus")
+	}
+
+	return &memberEntity.MemberGet{
+		ID: member.ID,
+		User: userEntity.UserGet{
+			UUID:    member.UserID,
+			IsAdmin: member.User.IsAdmin,
+			Email:   member.User.Email,
+			Phone:   member.User.Phone,
+		},
+		Name:              member.Name,
+		Major:             member.Major,
+		ProfilePictureUrl: member.ProfilePictureUrl,
+	}, nil
+}
