@@ -103,12 +103,12 @@ func (r *memberRepository) DeleteMember(id int) (*memberEntity.Member, bool, err
 	}
 
 	deleteQuery := r.db.Model(&member).Where("id = ?", id).Delete(&member)
-	memberExists, err = validator.Query(deleteQuery)
+	memberDeleted, err := validator.Query(deleteQuery)
 	if err != nil {
 		return nil, false, err
 	}
 
-	if memberExists {
+	if !memberDeleted {
 		return nil, false, nil
 	}
 
