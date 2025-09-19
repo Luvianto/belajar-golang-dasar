@@ -9,8 +9,7 @@ func Query(query *gorm.DB) (exists bool, err error) {
 		return false, query.Error
 	}
 
-	var result int64
-	if query.Count(&result); result == 0 {
+	if query.RowsAffected == 0 {
 		return false, nil
 	}
 
