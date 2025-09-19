@@ -46,7 +46,13 @@ func (s *memberService) GetAllMember() ([]*memberEntity.MemberGet, error) {
 	var memberGets []*memberEntity.MemberGet
 	for _, member := range members {
 		memberGets = append(memberGets, &memberEntity.MemberGet{
-			ID:                member.ID,
+			ID: member.ID,
+			User: userEntity.UserGet{
+				UUID:    member.User.UUID,
+				IsAdmin: member.User.IsAdmin,
+				Email:   member.User.Email,
+				Phone:   member.User.Phone,
+			},
 			Name:              member.Name,
 			Major:             member.Major,
 			ProfilePictureUrl: member.ProfilePictureUrl,
