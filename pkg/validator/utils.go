@@ -1,0 +1,81 @@
+package validator
+
+import (
+	"belajar-golang-dasar/pkg/handler"
+	"errors"
+	"net/http"
+	"reflect"
+	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"github.com/rs/zerolog/log"
+)
+
+var tagMessages = map[string]string{
+	"required":       "Kolom ini wajib diisi",
+	"required-param": "Parameter ini wajib diisi",
+	"email":          "Email tidak valid",
+	"max":            "Melebihi panjang maksimum",
+	"min":            "Tidak memenuhi panjang minimum",
+	"len":            "Panjang tidak valid",
+	"lte":            "Melebihi nilai maksimum",
+	"gte":            "Tidak memenuhi nilai minimum",
+}
+
+func parseTagMessage(tag string) string {
+	if message, ok := tagMessages[tag]; ok {
+		return message
+	}
+	return tag
+}
+
+func requestValidator(c *gin.Context, req interface{}, validatorType string) error {
+	var modelTag string
+	var errorMessage string
+
+	switch validatorType {
+	case "body":
+		modelTag = "json"
+		errorMessage = "Permintaan body tidak valid"
+	case "param":
+		modelTag = "form"
+		errorMessage = "Parameter query tidak valid"
+	case "uri":
+		modelTag = "uri"
+		errorMessage = "Parameter URI tidak valid"
+	default:
+		panic("Jenis validator tidak valid")
+	}
+
+	val := validator.New()
+	val.RegisterTagNameFunc(func(field reflect.StructField) string {
+		name := strings.SplitN(field.Tag.Get(modelTag), ",", 2)[0]
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+	if err := val.Struct(req); err != nil {
+		var valErrors validator.ValidationErrors
+		if errors.As(err, &valErrors) {
+			errors := make([]handler.ApiError, len(valErrors))
+			for i, valError := range valErrors {
+				errorTag := valError.Tag()
+				if errorTag == "required" && validatorType == "param" {
+					errorTag = "required-param"
+				}
+				errors[i] = handler.ApiError{
+					Field:   valError.Field(),
+					Message: parseTagMessage(errorTag),
+				}
+			}
+			handler.Error(c, http.StatusBadRequest, errorMessage, errors...)
+		}
+
+		log.Error().Err(err).Msg("Data tidak valid")
+		return err
+	}
+
+	return nil
+}

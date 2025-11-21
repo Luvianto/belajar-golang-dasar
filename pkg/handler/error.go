@@ -24,7 +24,7 @@ var errorResponsePool = sync.Pool{
 	},
 }
 
-func Error(c *gin.Context, statusCode int, message string, errors []ApiError) {
+func Error(c *gin.Context, statusCode int, message string, errors ...ApiError) {
 	response := errorResponsePool.Get().(*ErrorResponse)
 
 	response.Status = false
